@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+  xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+  xmlns:georss="http://www.georss.org/georss"
+  xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#">
+  <channel>
+    <title>Complex RSS fixture</title>
+    <atom:link href="https://www.feedlater.test/feed/" rel="self" type="application/rss+xml" />
+    <link>https://www.feedlater.test</link>
+    <description>News feed and read it later app, built by Mikkel Högh and his merry men.</description>
+    <lastBuildDate>Man, 25 Oct 2021 07:27:04 +0200</lastBuildDate>
+    <language>en-US</language>
+    <sy:updatePeriod>hourly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <generator>https://wordpress.org/?v=5.3.2</generator>
+    <item>
+      <title>FeedlaterCast, Episode 242 – The iPad mini: Small Wonder</title>
+      <link>https://www.feedlater.test/cast/episode-242-the-ipad-mini-small-wonder/</link>
+      <pubDate>Wed, 29 Sep 2021 16:52:03 +0000</pubDate>
+      <dc:creator><![CDATA[Mikkel Högh]]></dc:creator>
+      <category><![CDATA[apple]]></category>
+      <category><![CDATA[gadgets]]></category>
+      <guid isPermaLink="false">https://www.feedlater.test/?p=67968</guid>
+      <description><![CDATA[This week on FeedlaterCast, we take a look at Apple’s new iPad lineup, that definitely looks tasty.]]></description>
+      <content:encoded><![CDATA[<p id="p1">
+        <a href="https://www.feedlater.test/cast/episode-242-the-ipad-mini-small-wonder/" rel="noopener noreferrer">This week</a> 
+        on FeedlaterCast, we, get unreasonably excited about burning money on new gadgets</p>
+        <p id="p2">It’s not like Apple doesn’t have enough money already.</p> ]]></content:encoded>
+    </item>
+  </channel>
+</rss>
