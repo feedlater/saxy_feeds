@@ -20,7 +20,8 @@ defmodule SaxyFeeds.MixProject do
   defp deps do
     [
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:saxy, "~> 1.4"}
+      {:saxy, "~> 1.4"},
+      {:timex, "~> 3.7"}
     ]
   end
 end

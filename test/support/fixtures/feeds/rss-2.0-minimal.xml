@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rss version="2.0">
+
+  <channel>
+
+    <title>Blog posts on hex.pm</title>
+    <link>https://hex.pm/blog</link>
+    <description>Blog posts on hex.pm</description>
+    <language>en</language>
+
+    
+    <item>
+      <title>Hex v1.0 released and the future of Hex</title>
+      <description><![CDATA[We just released Hex 1.0.0 with no major changes compared to the last release 0.21.0 and we will soon release Hex 2.0.0, again with no major changes. Let’s talk about why we are doing this and what Hex being version 1.0.0 or 2.0.0 means.]]></description>
+      <link>https://hex.pm/blog/hex-v1.0-released-and-the-future-of-hex</link>
+      <pubDate>Mon, 13 Dec 2021 00:00:00 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>Introducing Hex Preview</title>
+      <description><![CDATA[After months of development, I am proud to announce the launch of <a href="https://preview.hex.pm">preview.hex.pm</a>!]]></description>
+      <link>https://hex.pm/blog/introducing-hex-preview</link>
+      <pubDate>Mon, 25 Jan 2021 00:00:00 GMT</pubDate>
+    </item>
+    
+    <item>
+      <title>Hex v0.21 released</title>
+      <description><![CDATA[Hex v0.21 adds registry self-hosting, diff &amp; dependencies improvements, <code class="inline">mix hex.sponsor</code> task, and more!]]></description>
+      <link>https://hex.pm/blog/hex-v0.21-released</link>
+      <pubDate>Fri, 15 Jan 2021 00:00:00 GMT</pubDate>
+    </item>
+
+  </channel>
+
+</rss>
