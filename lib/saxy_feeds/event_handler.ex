@@ -64,14 +64,9 @@ defmodule SaxyFeeds.EventHandler do
     {content, state} = ParserState.character_capture_end(state)
 
     if content != "" do
-      updated_entity =
-        state
-        |> Map.get(mapping.entity)
-        |> Map.put(mapping.field, content)
-
       {:ok,
        state
-       |> Map.put(mapping.entity, updated_entity)
+       |> save_element_content(mapping, content)
        |> ParserState.path_unshift()}
     else
       {:ok, state |> ParserState.path_unshift()}
@@ -100,6 +95,32 @@ defmodule SaxyFeeds.EventHandler do
     else
       {:ok, ParserState.add_characters(state, chars)}
     end
+  end
+
+  @doc """
+  Save element content into the state as defined by the mapping.
+
+  Checks for a custom save handler before saving the value untransformed.
+  """
+  def save_element_content(%ParserState{} = state, mapping, content) do
+    if is_nil(Map.get(mapping, :save_handler)) do
+      update_entity_with_mapped_field(state, mapping, content)
+    else
+      mapping.save_handler.(state, mapping, content)
+    end
+  end
+
+  @doc """
+  Given a field mapping and a value, update the field and entity
+  specified with the given value.
+  """
+  def update_entity_with_mapped_field(%ParserState{} = state, mapping, value) do
+    updated_entity =
+      state
+      |> Map.get(mapping.entity)
+      |> Map.put(mapping.field, value)
+
+    Map.put(state, mapping.entity, updated_entity)
   end
 
   defp debug_path(%ParserState{} = state) do
