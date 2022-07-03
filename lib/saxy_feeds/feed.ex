@@ -5,6 +5,7 @@ defmodule SaxyFeeds.Feed do
 
   defstruct type: nil,
             version: nil,
+            id: nil,
             title: nil,
             home_page_url: nil,
             feed_url: nil,
