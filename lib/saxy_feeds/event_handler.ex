@@ -3,7 +3,7 @@ defmodule SaxyFeeds.EventHandler do
   Main Saxy event handler.
   """
 
-  alias SaxyFeeds.Formats.Rss2
+  alias SaxyFeeds.Formats.{Atom1, Rss2}
   alias SaxyFeeds.Feed.Item
   alias SaxyFeeds.{ParserState, XmlAttributes}
 
@@ -22,12 +22,30 @@ defmodule SaxyFeeds.EventHandler do
     {:ok, %{state.feed | items: Enum.reverse(state.items)}}
   end
 
+  # Root element handler for Atom 1.0.
+  @impl true
+  def handle_event(:start_element, {"feed", attrs}, %ParserState{path: []} = state) do
+    case XmlAttributes.get(attrs, "xmlns") do
+      "http://www.w3.org/2005/Atom" ->
+        {:ok,
+         %{
+           state
+           | format: Atom1,
+             structure_map: Atom1.get_structure_map()
+         }
+         |> ParserState.path_shift("feed")}
+
+      rejected ->
+        {:halt, "Encountered unsupported feed XML namespace #{rejected}."}
+    end
+  end
+
   # Root element handler for RSS 2.0.
   @impl true
   def handle_event(:start_element, {"rss", attrs}, %ParserState{path: []} = state) do
     case XmlAttributes.get(attrs, "version") do
       "2.0" ->
-        {:ok, %{state | structure_map: Rss2.get_structure_map()}}
+        {:ok, %{state | format: Rss2, structure_map: Rss2.get_structure_map()}}
 
       rejected ->
         {:halt, "Encountered unsupported RSS version #{rejected}."}
@@ -35,7 +53,7 @@ defmodule SaxyFeeds.EventHandler do
   end
 
   @impl true
-  def handle_event(:start_element, {elem, _attrs}, %ParserState{} = state) do
+  def handle_event(:start_element, {elem, attrs}, %ParserState{} = state) do
     state = ParserState.path_shift(state, elem)
 
     mapping = get_mapping_for_path(state)
@@ -43,7 +61,8 @@ defmodule SaxyFeeds.EventHandler do
     if is_map(mapping) do
       {:ok,
        state
-       |> maybe_create_new_entity(elem)
+       |> maybe_create_new_entity(mapping)
+       |> maybe_capture_attributes(attrs)
        |> maybe_start_character_capture(mapping)}
     else
       Logger.warning("Found unexpected element at path `#{debug_path(state)}`")
@@ -67,17 +86,24 @@ defmodule SaxyFeeds.EventHandler do
       {:ok,
        state
        |> save_element_content(mapping, content)
+       |> maybe_drop_attributes()
        |> ParserState.path_unshift()}
     else
-      {:ok, state |> ParserState.path_unshift()}
+      {:ok,
+       state
+       |> maybe_drop_attributes()
+       |> ParserState.path_unshift()}
     end
   end
 
   @impl true
-  def handle_event(:end_element, elem, %ParserState{} = state) do
+  def handle_event(:end_element, _elem, %ParserState{} = state) do
+    mapping = get_mapping_for_path(state)
+
     {:ok,
      state
-     |> maybe_finalize_entity(elem)
+     |> maybe_run_save_handler(mapping)
+     |> maybe_finalize_entity(mapping)
      |> ParserState.path_unshift()}
   end
 
@@ -123,9 +149,11 @@ defmodule SaxyFeeds.EventHandler do
     Map.put(state, mapping.entity, updated_entity)
   end
 
-  defp debug_path(%ParserState{} = state) do
+  defp debug_path(%ParserState{format: Rss2} = state) do
     Enum.join(["rss" | Enum.reverse(state.path)], ".")
   end
+
+  defp debug_path(%ParserState{} = state), do: Enum.join(Enum.reverse(state.path), ".")
 
   defp get_mapping_for_path(%ParserState{path: path, structure_map: structure_map})
        when is_list(path) and path != [] do
@@ -137,17 +165,36 @@ defmodule SaxyFeeds.EventHandler do
 
   defp get_mapping_for_path(_state), do: nil
 
-  defp maybe_create_new_entity(%ParserState{} = state, "item") do
+  defp maybe_capture_attributes(%ParserState{} = state, []), do: state
+
+  defp maybe_capture_attributes(%ParserState{} = state, attrs) do
+    %{state | attributes: Map.put(state.attributes, state.path_string, attrs)}
+  end
+
+  defp maybe_create_new_entity(
+         %ParserState{} = state,
+         %{contains_entity: :item}
+       ) do
     %{state | item: %Item{}}
   end
 
   defp maybe_create_new_entity(%ParserState{} = state, _elem), do: state
 
-  defp maybe_finalize_entity(%ParserState{} = state, "item") do
+  defp maybe_drop_attributes(%ParserState{} = state) do
+    %{state | attributes: Map.delete(state.attributes, state.path_string)}
+  end
+
+  defp maybe_finalize_entity(%ParserState{} = state, %{contains_entity: :item}) do
     %{state | items: [state.item | state.items], item: nil}
   end
 
   defp maybe_finalize_entity(%ParserState{} = state, _elem), do: state
+
+  defp maybe_run_save_handler(%ParserState{} = state, %{save_handler: save_handler} = mapping) do
+    save_handler.(state, mapping, nil)
+  end
+
+  defp maybe_run_save_handler(%ParserState{} = state, _mapping), do: state
 
   defp maybe_start_character_capture(%ParserState{} = state, %{has_text_content: true}) do
     ParserState.character_capture_start(state)

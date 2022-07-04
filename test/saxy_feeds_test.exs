@@ -2,6 +2,27 @@ defmodule SaxyFeedsTest do
   use ExUnit.Case, async: true
 
   describe "parse_string/1" do
+    test "parses a 800kB Atom 1.0 feed" do
+      {:ok, xml_string} = File.read("test/support/fixtures/feeds/atom-1.0-elixir.xml")
+
+      {:ok, feed} = SaxyFeeds.parse_string(xml_string)
+
+      assert feed.id == "http://elixir-lang.org"
+      assert feed.title == "Elixir Lang"
+      assert feed.feed_url == "http://elixir-lang.org/atom.xml"
+      assert feed.home_page_url == "http://elixir-lang.org"
+
+      assert length(feed.items) == 49
+
+      item = Enum.at(feed.items, 0)
+
+      assert item.id == "/blog/2021/12/03/elixir-v1-13-0-released"
+      assert item.title == "Elixir v1.13 released" 
+      assert item.url == "http://elixir-lang.org/blog/2021/12/03/elixir-v1-13-0-released/"
+      assert String.contains?(item.content_html, "asciinema</a> snippets. You may need")
+      assert item.date_modified == ~U[2021-12-03 00:00:00Z]
+    end
+
     test "parses a minimal RSS 2.0 feed" do
       {:ok, xml_string} = File.read("test/support/fixtures/feeds/rss-2.0-minimal.xml")
 

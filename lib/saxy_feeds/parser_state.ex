@@ -6,14 +6,17 @@ defmodule SaxyFeeds.ParserState do
   alias __MODULE__
   alias SaxyFeeds.Feed
 
-  defstruct capture_characters: false,
+  defstruct attributes: %{},
+            capture_characters: false,
             character_buffer: [],
             feed: %Feed{},
+            format: nil,
             # Feed item currently being captured, if any.
             item: nil,
             # List of previously parsed feed items, in reverse order.
             items: [],
             path: [],
+            path_string: "",
             structure_map: nil
 
   @doc """
@@ -48,6 +51,7 @@ defmodule SaxyFeeds.ParserState do
   """
   def path_shift(%ParserState{} = state, key) do
     %{state | path: [key | state.path]}
+    |> update_path_string()
   end
 
   @doc """
@@ -60,6 +64,16 @@ defmodule SaxyFeeds.ParserState do
 
   def path_unshift(%ParserState{} = state) do
     [_removed | path] = state.path
+
     %{state | path: path}
+    |> update_path_string()
+  end
+
+  defp update_path_string(%ParserState{path: path} = state) do
+    if path == [] do
+      %{state | path_string: ""}
+    else
+      %{state | path_string: path |> Enum.reverse() |> Enum.join(".")}
+    end
   end
 end

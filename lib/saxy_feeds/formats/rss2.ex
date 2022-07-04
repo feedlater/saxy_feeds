@@ -62,6 +62,7 @@ defmodule SaxyFeeds.Formats.Rss2 do
           field: :content_html,
           has_text_content: true
         },
+        contains_entity: :item,
         has_children: true
       },
       has_children: true
