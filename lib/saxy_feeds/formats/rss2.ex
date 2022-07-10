@@ -43,7 +43,7 @@ defmodule SaxyFeeds.Formats.Rss2 do
         },
         "description" => %{
           entity: :item,
-          field: :description,
+          field: :summary,
           has_text_content: true
         },
         "link" => %{

@@ -48,7 +48,7 @@ defmodule SaxyFeeds.Formats.Atom1 do
         },
         "summary" => %{
           entity: :item,
-          field: :description,
+          field: :summary,
           has_text_content: true
         },
         "link" => %{

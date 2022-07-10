@@ -37,7 +37,7 @@ defmodule SaxyFeedsTest do
 
       item = Enum.at(feed.items, 0)
       assert item.title == "Hex v1.0 released and the future of Hex"
-      assert String.contains?(item.description, "again with no major changes.")
+      assert String.contains?(item.summary, "again with no major changes.")
       assert item.date_published == ~U[2021-12-13 00:00:00Z]
     end
 
@@ -61,7 +61,7 @@ defmodule SaxyFeedsTest do
       assert item.url == "https://www.feedlater.test/cast/episode-242-the-ipad-mini-small-wonder/"
       assert item.title == "FeedlaterCast, Episode 242 – The iPad mini: Small Wonder"
       assert item.date_published == ~U[2021-09-29 16:52:03Z]
-      assert String.contains?(item.description, "look at Apple’s new iPad lineup")
+      assert String.contains?(item.summary, "look at Apple’s new iPad lineup")
 
       assert String.contains?(
                item.content_html,
